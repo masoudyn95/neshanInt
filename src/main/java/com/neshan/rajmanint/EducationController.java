@@ -1,6 +1,7 @@
 package com.neshan.rajmanint;
 
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 @RestController
 public class EducationController {
@@ -47,6 +54,16 @@ public class EducationController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(courseStudents, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/getUniversityStd", method = RequestMethod.GET)
+    public ResponseEntity<Map<University, Long>> getUniversitiesStd() {
+        List<Student> students = getAllStudents().getBody();
+        Map<University, Long> collection = students.stream().collect(groupingBy(student -> student.getUnName(), counting()));
+        if (collection.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(collection, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/deleteStudent/{id}", method = RequestMethod.DELETE)
