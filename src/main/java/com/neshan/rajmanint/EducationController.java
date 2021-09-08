@@ -1,37 +1,41 @@
 package com.neshan.rajmanint;
-
-
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
+@ConfigurationProperties(prefix = "remote")
 @RestController
+@Data
 public class EducationController {
-
-    @Autowired
+    private String url;
     private StudentRepository studentRepository;
-
-    @Autowired
     private CourseRepository courseRepository;
-
-    @Autowired
     private CourseStudentRepository courseStudentRepository;
+
+    public EducationController(CourseRepository courseRepository, StudentRepository studentRepository, CourseStudentRepository courseStudentRepository){
+        this.courseRepository = courseRepository;
+        this.studentRepository = studentRepository;
+        this.courseStudentRepository = courseStudentRepository;
+    }
 
     @RequestMapping(value = "/api/getAllStudents", method = RequestMethod.GET)
     public ResponseEntity<List<Student>> getAllStudents() {
         List<Student> students = studentRepository.findAll();
+        HttpHeaders headers = new HttpHeaders();
         if (students.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -75,5 +79,38 @@ public class EducationController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/api/addStudent", method = RequestMethod.POST)
+    public ResponseEntity<HttpStatus> addStudent(@RequestBody Student student) {
+        studentRepository.save(student);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @RequestMapping(value = "/api/getTeachers/restTemplate/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Teacher> getTeacherTemplate(@PathVariable (name = "id") long id) {
+        RestTemplate restTemplate = new RestTemplate();
+        url = String.format("%s/api/getTeacherById/%d", url, id);
+        System.out.println(url);
+        Teacher teacher = restTemplate.getForObject(url, Teacher.class);
+        if (teacher == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(teacher, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/getTeachers/webClient/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Teacher> getTeacherWClient(@PathVariable (name = "id") long id) {
+        url = String.format("%s/api/getTeacherById/%d", url, id);
+        WebClient client = WebClient.create();
+        WebClient.ResponseSpec responseSpec = client.get()
+                .uri(url)
+                .retrieve();
+        Teacher teacher = responseSpec.bodyToMono(Teacher.class).block();
+        if (teacher == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(teacher, HttpStatus.OK);
     }
 }

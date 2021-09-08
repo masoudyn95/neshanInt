@@ -28,7 +28,5 @@ public class CourseStudent {
     @Column(name = "date")
     private String date;
 
-    public CourseStudent() {
-    }
 
 }
