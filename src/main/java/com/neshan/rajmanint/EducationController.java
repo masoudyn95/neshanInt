@@ -35,7 +35,6 @@ public class EducationController {
     @RequestMapping(value = "/api/getAllStudents", method = RequestMethod.GET)
     public ResponseEntity<List<Student>> getAllStudents() {
         List<Student> students = studentRepository.findAll();
-        HttpHeaders headers = new HttpHeaders();
         if (students.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -91,8 +90,8 @@ public class EducationController {
     @RequestMapping(value = "/api/getTeachers/restTemplate/{id}", method = RequestMethod.GET)
     public ResponseEntity<Teacher> getTeacherTemplate(@PathVariable (name = "id") long id) {
         RestTemplate restTemplate = new RestTemplate();
-        url = String.format("%s/api/getTeacherById/%d", url, id);
-        System.out.println(url);
+        String url1 = String.format("%s/api/getTeacherById/%d", url, id);
+        System.out.println(url1);
         Teacher teacher = restTemplate.getForObject(url, Teacher.class);
         if (teacher == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -102,10 +101,11 @@ public class EducationController {
 
     @RequestMapping(value = "/api/getTeachers/webClient/{id}", method = RequestMethod.GET)
     public ResponseEntity<Teacher> getTeacherWClient(@PathVariable (name = "id") long id) {
-        url = String.format("%s/api/getTeacherById/%d", url, id);
+        String url1 = String.format("%s/api/getTeacherById/%d", url, id);
+        System.out.println(url1);
         WebClient client = WebClient.create();
         WebClient.ResponseSpec responseSpec = client.get()
-                .uri(url)
+                .uri(url1)
                 .retrieve();
         Teacher teacher = responseSpec.bodyToMono(Teacher.class).block();
         if (teacher == null) {

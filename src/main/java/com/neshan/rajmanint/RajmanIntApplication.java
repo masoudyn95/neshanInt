@@ -25,7 +25,7 @@ public class RajmanIntApplication {
         SpringApplication.run(RajmanIntApplication.class, args);
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 600000)
     public void DBStatus(){
         System.out.printf("%d students have registered in this system since now!%n", studentRepository.count());
         List<CourseStudentRepository.CourseStudentSection> average = courseStudentRepository.getCourseStudentsAvg();
