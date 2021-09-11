@@ -1,4 +1,4 @@
-package com.neshan.rajmanint;
+package com.neshan.rajmanint.Entities;
 
 import lombok.Data;
 

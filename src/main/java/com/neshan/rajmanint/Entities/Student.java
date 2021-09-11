@@ -1,15 +1,18 @@
-package com.neshan.rajmanint;
+package com.neshan.rajmanint.Entities;
 
 import lombok.Data;
-
+import org.springframework.data.redis.core.RedisHash;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Table(name = "student")
+@RedisHash("student")
 @Data
-public class Student {
+public class Student implements Serializable {
     @Id
+    @org.springframework.data.annotation.Id
     @Column(name = "st_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long studentId;
@@ -27,6 +30,6 @@ public class Student {
     @Enumerated(EnumType.STRING)
     private University unName;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<CourseStudent> courseStudentRel;
 }

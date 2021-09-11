@@ -1,8 +1,10 @@
-package com.neshan.rajmanint;
+package com.neshan.rajmanint.Entities;
+import com.neshan.rajmanint.Entities.Course;
+import com.neshan.rajmanint.Entities.CrsStdFKey;
+import com.neshan.rajmanint.Entities.Student;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "course_student")

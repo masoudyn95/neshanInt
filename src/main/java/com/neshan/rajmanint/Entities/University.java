@@ -1,4 +1,4 @@
-package com.neshan.rajmanint;
+package com.neshan.rajmanint.Entities;
 
 public enum University {
     IUT,

@@ -1,6 +1,7 @@
-package com.neshan.rajmanint;
+package com.neshan.rajmanint.Repositories;
 
-import lombok.Data;
+import com.neshan.rajmanint.Entities.CourseStudent;
+import com.neshan.rajmanint.Entities.CrsStdFKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
